@@ -1,0 +1,18 @@
+# enter shebang directive here
+
+echo "This is a config" | docker config create my-config -
+
+# create a redis service and give it access to the config
+docker service create --name redis --config my-config redis:alpine
+
+# verify the task is running
+docker service ps redis
+
+# get the id of the redis process
+docker ps --filter name=redis -q
+
+# use exec to connect container to contents of config file 
+docker container exec $(docker ps --filter name=redis -q) ls -l /my-config
+
+# read contents of the config file
+docker container exec $(docker ps --filter name=redis -q) cat /my-config
